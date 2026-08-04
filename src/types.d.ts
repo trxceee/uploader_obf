@@ -5,7 +5,12 @@ declare global {
     handler: (req: Request) => Response | Promise<Response>;
   }
 
-  type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE" | "OPTIONS"
+  type Middleware = (
+    req: Request,
+    next: () => Response | Promise<Response>,
+  ) => Response | Promise<Response>;
+
+  type HttpMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE" | "OPTIONS";
 }
 
 export {};
