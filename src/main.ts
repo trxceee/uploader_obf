@@ -15,27 +15,27 @@ async function main() {
   // const __filename = fileURLToPath(import.meta.file);
   // const __dirname = path.dirname(__filename);
 
-  const pathToJar = path.resolve("D:", "/autoupd");
-  console.log(pathToJar)
-  const process = spawn("java", ["-jar", "obfuscation.jar"], {
-    cwd: pathToJar,
-  });
+  // const pathToJar = path.resolve("D:", "/autoupd");
+  // console.log(pathToJar)
+  // const process = spawn("java", ["-jar", "obfuscation.jar"], {
+  //   cwd: pathToJar,
+  // });
 
-  process.stdout.on("data", (data) => {
-    console.log("stdout:", data.toString());
-  });
+  // process.stdout.on("data", (data) => {
+  //   console.log("stdout:", data.toString());
+  // });
 
-  process.stderr.on("data", (data) => {
-    console.error("stderr:", data.toString());
-  });
+  // process.stderr.on("data", (data) => {
+  //   console.error("stderr:", data.toString());
+  // });
 
-  process.on("close", (code) => {
-    console.log("Процесс завершился:", code);
-  });
+  // process.on("close", (code) => {
+  //   console.log("Процесс завершился:", code);
+  // });
 
-  process.on("error", (error) => {
-    console.error("Не удалось запустить:", error);
-  });
+  // process.on("error", (error) => {
+  //   console.error("Не удалось запустить:", error);
+  // });
 }
 
 await main();
