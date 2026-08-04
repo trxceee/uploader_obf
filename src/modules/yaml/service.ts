@@ -2,7 +2,7 @@ import { YAML } from "bun";
 import { join } from "path";
 
 export class YamlService {
-  public async editConfig(path: string, fileName: string) {
+  public async editConfig(path: string, fileName: string): Promise<void> {
     const config = YAML.parse(join(path, fileName)) as any;
     config.input = join(path, "jars", "input.jar");
     config.output = join(path, "jars", "output.jar");

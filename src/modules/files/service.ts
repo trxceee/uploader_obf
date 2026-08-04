@@ -3,7 +3,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 
 export class FilesService {
-  public async createTempDir(clientName: string = "heavy") {
+  public async createTempDir(clientName: string = "heavy"): Promise<string> {
     return mkdtemp(join(tmpdir(), `${clientName}-`));
   }
 
