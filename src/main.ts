@@ -1,8 +1,8 @@
-import { fileURLToPath } from "url";
-import { Router } from "./core/router";
-import { Server } from "./core/server";
-import { spawn } from "child_process";
-import path, { join } from "path";
+// import { fileURLToPath } from "url";
+// import { Router } from "./core/router";
+// import { Server } from "./core/server";
+// import { spawn } from "child_process";
+// import path, { join } from "path";
 
 
 async function main() {

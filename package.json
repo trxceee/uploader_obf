@@ -1,14 +1,14 @@
 {
   "name": "uploader_obf",
-  "type": "module",
-  "scripts": {
-    "start": "bun run src/main.ts"
-  },
-  "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
-  }
+  },
+  "private": true,
+  "scripts": {
+    "start": "bun run src/main.ts"
+  },
+  "type": "module"
 }
