@@ -1,7 +1,9 @@
 {
-  "name": "windows_server",
-  "module": "index.ts",
+  "name": "uploader_obf",
   "type": "module",
+  "scripts": {
+    "start": "bun run src/main.ts"
+  },
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"
