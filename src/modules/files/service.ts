@@ -1,4 +1,4 @@
-import { copyFile, exists, mkdir, mkdtemp } from "fs/promises";
+import { copyFile, exists, mkdtemp } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 
@@ -9,7 +9,6 @@ export class FilesService {
 
   public async copyFile(from: string, to: string): Promise<void> {
     await this.checkExistance(from);
-    await mkdir(to);
     await copyFile(from, to);
     console.log(`Файл "${from} успешно скопирован в "${to}""`);
   }
