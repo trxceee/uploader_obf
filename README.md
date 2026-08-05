@@ -1,15 +1,40 @@
-# windows_server
+# Java Obfuscation Server
 
-To install dependencies:
+Сервер для обфускации Java `.jar` файлов.
+
+## Требования
+
+* [Bun](https://bun.sh/)
+* Java Runtime Environment (JRE)
+
+## Установка
+
+Клонируйте репозиторий и установите зависимости:
 
 ```bash
 bun install
 ```
 
-To run:
+## Настройка переменных окружения
+
+Перед запуском необходимо настроить переменные окружения.
+
+Используйте файл `.env.example` как пример необходимых переменных окружения и создайте на его основе файл `.env`.
+
+## Запуск
+
+Запуск в режиме разработки:
 
 ```bash
-bun run index.ts
+bun dev
 ```
 
-This project was created using `bun init` in bun v1.3.12. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Обычный запуск:
+
+```bash
+bun start
+```
+
+## Использование
+
+Сервис принимает Java `.jar` файл, выполняет процесс обфускации и возвращает готовый защищённый `.jar` файл.
