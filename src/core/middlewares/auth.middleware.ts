@@ -1,6 +1,9 @@
-import { errors } from "../shared/error";
+import { errors } from "../../shared/error";
 
-export const authMiddleware: Middleware = (req, next) => {
+export const authMiddleware: Middleware = (
+  req,
+  next,
+): Response | Promise<Response> => {
   const authHeader = req.headers.get("authorization");
 
   if (!authHeader?.startsWith("Bearer ")) {
