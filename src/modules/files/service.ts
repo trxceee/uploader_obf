@@ -10,10 +10,10 @@ export class FilesService {
   public async copyFile(from: string, to: string): Promise<void> {
     await this.checkExistance(from);
     await copyFile(from, to);
-    console.log(`Файл "${from} успешно скопирован в "${to}""`);
+    console.log(`Файл "${from}" успешно скопирован в "${to}"`);
   }
 
   public async checkExistance(path: string): Promise<void> {
-    if (!(await exists(path))) throw new Error(`"${path} не существует"`);
+    if (!(await exists(path))) throw new Error(`"${path}" не существует`);
   }
 }
