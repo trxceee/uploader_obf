@@ -8,7 +8,7 @@ export class ObfuscationTransport {
     {
       handler: (req) => this.obfuscationService.obfuscate(req),
       method: "POST",
-      path: "/obfuscation/obfuscate",
+      path: "/api/v1/obfuscation/obfuscate",
     },
   ];
 
