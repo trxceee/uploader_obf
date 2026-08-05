@@ -1,68 +1,95 @@
-import { join, resolve } from "path";
-import { FilesService } from "../files";
-import { YamlService } from "../yaml";
+import { join } from "path";
 import { spawn } from "child_process";
 import { mkdir } from "fs/promises";
 
+import { FilesService } from "../files";
+import { YamlService } from "../yaml";
+import { getEnv } from "../../shared/utils";
+
 export class JavaProcess {
-  private readonly filesService: FilesService = new FilesService();
-  private readonly yamlService: YamlService = new YamlService();
+  private readonly filesService = new FilesService();
+  private readonly yamlService = new YamlService();
 
   public async runProcess(
     jarFile: File,
     clientName: string,
     isFabric: boolean,
-  ): Promise<boolean> {
-    return new Promise(async (res, rej) => {
-      const baseDir = process.env.OBF_BASE_DIRECTORY ?? resolve();
-      const tempDir = await this.filesService.createTempDir(clientName);
+  ): Promise<string> {
+    const baseDir = getEnv("OBF_BASE_DIRECTORY");
+    const configName = getEnv("CONFIG_NAME");
 
-      const configName = process.env.CONFIG_NAME ?? "config.yml";
-      const configFile = join(baseDir, configName);
-      const configTempPath = join(tempDir, configName);
+    const tempDir = await this.filesService.createTempDir(clientName);
+    const configPath = await this.prepareConfig(baseDir, tempDir, configName);
 
-      const jarsPath = join(tempDir, "jars");
+    await this.prepareInputJar(tempDir, jarFile);
 
-      const javaArgs = [
-        "-jar",
-        "obfuscation.jar",
-        ...(isFabric ? ["true"] : []),
-        configTempPath,
-      ];
+    await this.executeJavaObfuscation({
+      baseDir,
+      isFabric,
+      configPath,
+    });
 
-      console.log("tempDir:", tempDir);
-      console.log("javaArgs:", javaArgs);
+    return tempDir;
+  }
 
-      //   Копирование джарку в временную директорию
-      await mkdir(jarsPath);
-      const tempJar = join(jarsPath, "input.jar");
-      await Bun.write(tempJar, jarFile);
+  private async prepareInputJar(tempDir: string, jarFile: File): Promise<void> {
+    const jarsDir = join(tempDir, "jars");
+    await mkdir(jarsDir, { recursive: true });
 
-      //  Копирование конфига и патч с корректными данными
-      await this.filesService.copyFile(configFile, configTempPath);
-      await this.yamlService.editConfig(tempDir, configName);
+    const inputJarPath = join(jarsDir, getEnv("INPUT_JAR_NAME"));
+    await Bun.write(inputJarPath, jarFile);
+  }
 
-      // Запуск чайлд процесса
-      const childProcess = spawn("java", javaArgs, {
-        cwd: baseDir,
+  private async prepareConfig(
+    baseDir: string,
+    tempDir: string,
+    configName: string,
+  ): Promise<string> {
+    const defaultConfig = join(baseDir, configName);
+    const targetConfig = join(tempDir, configName);
+
+    await this.filesService.copyFile(defaultConfig, targetConfig);
+    await this.yamlService.editConfig(tempDir, configName);
+
+    return targetConfig;
+  }
+
+  private executeJavaObfuscation({
+    baseDir,
+    configPath,
+    isFabric,
+  }: {
+    baseDir: string;
+    configPath: string;
+    isFabric: boolean;
+  }): Promise<void> {
+    const args = [
+      "-jar",
+      "obfuscation.jar",
+      ...(isFabric ? ["true"] : []),
+      configPath,
+    ];
+
+    return new Promise((resolve, reject) => {
+      const process = spawn("java", args, { cwd: baseDir });
+
+      process.stdout.on("data", (chunk) => {
+        console.log(`STDOUT: ${chunk.toString()}`);
       });
 
-      childProcess.stdout.on("data", (chunk) => {
-        console.log(`STDOUT: `, chunk.toString("utf-8"));
+      process.stderr.on("data", (chunk) => {
+        console.error(`STDERR: ${chunk.toString()}`);
       });
 
-      childProcess.stderr.on("data", (chunk) => {
-        console.error(`STDERR: `, chunk.toString("utf-8"));
-      });
+      process.on("error", reject);
 
-      childProcess.on("error", (err) => {
-        console.error(`PROCESS ERROR: `, err);
-      });
+      process.on("close", (code) => {
+        if (code !== 0) {
+          reject(new Error(`Процесс обфускации завершился с кодом ${code}`));
+          return;
+        }
 
-      childProcess.on("close", (code) => {
-        if (code !== 0) rej(`Процесс завершился с кодом: ${code}`);
-        console.log("Процесс обфускации успешно завершён");
-        res(true);
+        resolve();
       });
     });
   }
